@@ -150,8 +150,16 @@ class CosyVoiceFrontEnd:
 
     def frontend_sft(self, tts_text, spk_id):
         tts_text_token, tts_text_token_len = self._extract_text_token(tts_text)
-        embedding = self.spk2info[spk_id]['embedding']
-        model_input = {'text': tts_text_token, 'text_len': tts_text_token_len, 'llm_embedding': embedding, 'flow_embedding': embedding}
+        model_input = {
+            'text': tts_text_token, 'text_len': tts_text_token_len, 
+            **self.spk2info[spk_id]
+        }
+        del model_input['prompt_text']
+        del model_input['prompt_text_len']
+        del model_input['llm_prompt_speech_token']
+        del model_input['llm_prompt_speech_token_len']
+        # del model_input['flow_prompt_speech_token']
+        # del model_input['flow_prompt_speech_token_len']        
         return model_input
 
     def frontend_zero_shot(self, tts_text, prompt_text, prompt_speech_16k, resample_rate):
